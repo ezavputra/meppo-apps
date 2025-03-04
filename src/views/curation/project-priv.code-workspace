@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../app-purchasing-2"
+		},
+		{
+			"name": "SSH FS - manunggaljasa",
+			"uri": "ssh://manunggaljasa/home/u341451470/domains/manunggaljasa.com/public_html"
+		},
+		{
+			"path": "../../../../meppogen"
+		}
+	],
+	"settings": {}
+}
