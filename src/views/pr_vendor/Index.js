@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import {
-  StatusBar, Dimensions, Platform, ImageBackground, ToastAndroid, BackHandler,
-  TouchableOpacity
-} from "react-native";
+import { StatusBar, Dimensions, Platform, ImageBackground, ToastAndroid, BackHandler } from "react-native";
 import { connect } from "react-redux";
 import axios from 'axios';
-import { baseURL } from "../../config/app";
 import { stylesIos } from "../config/style-ios";
 import { glueAndroid } from "../../config/style-android";
 import { setSettings } from "../../store/actionCreators";
@@ -18,10 +14,7 @@ import {
 // import BottomTabs from "../../new-components/BottomTabs";
 import {
   ChevronRight, ArrowLeft, SearchIcon, X,
-  PlusIcon,
-  Download,
-  EyeIcon,
-  FileEdit
+  PlusIcon
 } from "lucide-react-native";
 import { CommonActions } from '@react-navigation/native';
 import CarouselPager from 'react-native-carousel-pager';
@@ -31,13 +24,12 @@ import Skeleton from 'react-native-reanimated-skeleton';
 import Toast from 'react-native-toast-message';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
 import FormField from "../../new-components/FormControlContainer";
-// import ReactNativeBlobUtil from 'react-native-blob-util';
 
 const { width, height } = Dimensions.get("window");
 const CancelToken = axios.CancelToken;
 const source = CancelToken.source();
 
-class VendorRequestQuotation extends Component {
+class PurchaseRequest extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,13 +51,8 @@ class VendorRequestQuotation extends Component {
   }
 
   async fetchData() {
-    const { navigation, me, accessToken, saveSettings } = this.props;
-
     try {
-      let params = {
-        email: me.email
-      }
-      const response = await axios.post("/request_quotation_vendor", params);
+      const response = await axios.post("/purchase_request");
       this.setState({
         data: response.data.results,
         filtered_data: response.data.results,
@@ -75,63 +62,12 @@ class VendorRequestQuotation extends Component {
     }
   }
 
-  async openLink(url) {
-    try {
-      if (await InAppBrowser.isAvailable()) {
-        const result = await InAppBrowser.open(url, {
-          // iOS Properties
-          dismissButtonStyle: 'cancel',
-          preferredBarTintColor: '#453AA4',
-          preferredControlTintColor: 'white',
-          readerMode: false,
-          animated: true,
-          modalPresentationStyle: 'none',
-          modalTransitionStyle: 'coverVertical',
-          modalEnabled: true,
-          enableBarCollapsing: false,
-          // Android Properties
-          showTitle: true,
-          toolbarColor: '#009BD4',
-          secondaryToolbarColor: 'black',
-          navigationBarColor: 'black',
-          navigationBarDividerColor: 'white',
-          enableUrlBarHiding: true,
-          enableDefaultShare: true,
-          forceCloseOnRedirection: false,
-          // Specify full animation resource identifier(package:anim/name)
-          // or only resource name(in case of animation bundled with app).
-          // animations: {
-          //   startEnter: 'slide_up',
-          //   startExit: 'slide_none',
-          //   endEnter: 'slide_none',
-          //   endExit: 'slide_down'
-          // },
-          headers: {
-            'my-custom-header': 'my custom header value'
-          }
-        });
-      }
-      else Linking.openURL(url)
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: error.message,
-        visibilityTime: 2000,
-        // autoHide: false,
-        onPress: () => {
-          Toast.hide();
-        }
-      });
-    }
-  }
-
   onSuccessAdd = async (data) => {
     this.fetchData();
   }
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, me } = this.props;
     const { params = {} } = this.props.route;
     let no_doc = "";
 
@@ -162,7 +98,7 @@ class VendorRequestQuotation extends Component {
                   marginLeft: 16,
                   fontSize: 24, lineHeight: 32
                 }}>
-                  Request Quotation
+                  Purchase Request
                 </Text>
               </View>
             </Pressable>
@@ -268,89 +204,123 @@ class VendorRequestQuotation extends Component {
             }}
             renderItem={({ item, index }) => {
               return (
-                <View style={{
-                  flexDirection: 'row', marginHorizontal: 16, marginVertical: 8, padding: 16, borderRadius: 10,
-                  borderWidth: 1, borderColor: 'black',
-                  marginBottom: index + 1 == this.state.filtered_data.length ? 100 : 0,
-                  // backgroundColor: pressed ? '#bdeeff' : '#fff',
-                  alignItems: 'center', justifyContent: 'space-between',
-                }}>
-                  <View>
-                    <Text sx={glueAndroid.Global_textBaseBold}
-                      style={{ width: '100%', marginBottom: 4 }}>
-                      {item.code}
-                    </Text>
-                    <Text sx={glueAndroid.Global_textBaseBold}
-                      style={{ width: '100%', marginBottom: 4 }}>
-                      Req. Date: {item.date}
-                    </Text>
-                    <View>
-                      <Text sx={glueAndroid.Global_textBaseBold}
-                        style={{
-                          marginTop: 5, backgroundColor: 'green',
-                          paddingHorizontal: 8, paddingVertical: 4,
-                          color: 'white',
-                          borderRadius: 8, alignSelf: 'flex-start'
-                        }}>
-                        Open
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Pressable
-                      // key={"materialreq" + index}
-                      style={{
-                        marginVertical: 5, marginRight: 15
-                      }}
-                      onPress={async () => {
-                        navigation.navigate({
-                          name: 'VendorRequestQuotationView',
-                          params: {
-                            item: item
-                          }
-                        });
+                <Pressable
+                  key={"materialreq" + index}
+                  style={{
+                    marginVertical: 5,
+                    marginBottom: index + 1 == this.state.filtered_data.length ? 100 : 0
+                  }}
+                  onPress={() => {
+                    navigation.navigate({
+                      name: 'PRContainer',
+                      params: {
+                        onSuccessAdd: this.onSuccessAdd,
+                        item: item,
+                        menu: params.menu
+                      }
+                    });
+                  }}>
+                  {({ pressed }) => {
+                    return (
+                      <View style={{
+                        flexDirection: 'row', marginHorizontal: 16, marginVertical: 4, padding: 16, borderRadius: 10,
+                        borderWidth: 1, borderColor: 'black', backgroundColor: pressed ? '#bdeeff' : '#fff',
+                        alignItems: 'center', justifyContent: 'space-between',
                       }}>
-                      {({ pressed }) => {
-                        return (
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <EyeIcon size={20} color='black' />
+                        <View>
+                          <View>
+                            <Text sx={glueAndroid.Global_textBaseBold}
+                              style={{ width: '100%' }}>
+                              {item.code}
+                            </Text>
+                            <Text sx={glueAndroid.Global_textLightItalic}
+                              style={{ width: '100%', marginBottom: 5 }}>
+                              Dep. {item.department.name}
+                            </Text>
+                            <Text sx={glueAndroid.Global_textBaseBold}
+                              style={{ width: '100%' }}>
+                              Request{"\n"}
+                              Tgl :
+                              <Text sx={glueAndroid.Global_textLight}
+                                style={{ width: '100%' }}>
+                                {" "}{item.date}
+                              </Text>
+                              {/* <Text sx={glueAndroid.Global_textBaseBold}
+                                style={{ width: '100%' }}>
+                                {"\n"}Oleh :
+                                <Text sx={glueAndroid.Global_textLight}
+                                  style={{ width: '100%' }}>
+                                  {" "}{item.user_activity.created.name}
+                                </Text>
+                              </Text> */}
+                            </Text>
                           </View>
-                        )
-                      }}
-                    </Pressable>
-                    {/* <Pressable
-                      // key={"materialreq" + index}
-                      style={{
-                        marginVertical: 5,
-                      }}
-                      onPress={async () => {
-                        navigation.navigate({
-                          name: 'GenerateQuotation',
-                          params: {
-                            item: item
-                          }
-                        });
-                      }}>
-                      {({ pressed }) => {
-                        return (
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <FileEdit size={20} color='black' />
+                          <View>
+                            {/* <Text sx={glueAndroid.Global_textBaseBold}
+                              style={{
+                                marginTop: 5, backgroundColor: item.status.status_color,
+                                paddingHorizontal: 8, paddingVertical: 4,
+                                color: item.status.status_text_color,
+                                borderRadius: 8, alignSelf: 'flex-start'
+                              }}>
+                              {item.status.name}
+                            </Text> */}
                           </View>
-                        )
-                      }}
-                    </Pressable> */}
-                  </View>
-                </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                          <Text sx={glueAndroid.Global_textBaseBold}>
+                            Revisi {"\n"}ke-{item.revision ? null == 0 : item.revision}
+                          </Text>
+                          <ChevronRight size={24} color='black' />
+                        </View>
+                      </View>
+                    )
+                  }}
+                </Pressable>
               )
             }}>
           </FlatList>
+
+          {me.role.name == "Purchasing" && (
+            <View style={{
+              position: 'absolute', bottom: 0, width: '100%'
+            }}>
+              <Pressable
+                onPress={() => {
+                  navigation.navigate({
+                    name: 'PurchaseRequestAdd',
+                    params: {
+                      onSuccessAdd: this.onSuccessAdd
+                    }
+                  });
+                }}>
+                {({ pressed }) => {
+                  return (
+                    <View style={{
+                      flexDirection: 'row', marginHorizontal: 16, marginVertical: 4, padding: 12, borderRadius: 10, marginBottom: 20,
+                      backgroundColor: pressed ? '#306fe3' : '#013597', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                      <View style={{ flexDirection: 'row' }}>
+                        <PlusIcon size={18} color='white' />
+                        <Text sx={glueAndroid.Global_textBaseBold}
+                          style={{ color: 'white', marginLeft: 10 }}>
+                          Pengajuan Purchase Request
+                        </Text>
+                      </View>
+                    </View>
+                  )
+                }}
+              </Pressable>
+            </View>
+          )}
+
         </Box>
       </>
     );
   }
 }
 
-VendorRequestQuotation.propTypes = {
+PurchaseRequest.propTypes = {
   saveSettings: PropTypes.func,
 };
 
@@ -365,4 +335,4 @@ const mapDispatchToProps = (dispatch) => ({
   saveSettings: (user) => dispatch(setSettings(user)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(VendorRequestQuotation);
+export default connect(mapStateToProps, mapDispatchToProps)(PurchaseRequest);

@@ -42,6 +42,9 @@ import PurchaseRequest from './views/purchase_request/PurchaseRequest';
 import PurchaseRequestAdd from './views/purchase_request/PurchaseRequestAdd';
 import PurchaseRequestDetailAdd from './views/purchase_request/PurchaseRequestDetailAdd';
 
+import PRVendorIndex from './views/pr_vendor/Index';
+import PRVendorContainer from './views/pr_vendor/Container';
+
 import PurchaseOrder from './views/purchase_order/PurchaseOrder';
 import PurchaseOrderDetail from './views/purchase_order/PurchaseOrderDetail';
 import PurchaseOrderAdd from './views/purchase_order/PurchaseOrderAdd';
@@ -78,6 +81,7 @@ import Quotation from './views/quotation/Quotation';
 import QuotationDetail from './views/quotation/QuotationDetail';
 import QuotationDelivery from './views/quotation/QuotationDelivery';
 import GenerateQuotation from './views/quotation/GenerateQuotation';
+import GenerateQuotationV2 from './views/quotation/GenerateQuotationV2';
 import GenerateQuotationChoose from './views/quotation/GenerateQuotationChoose';
 import VendorRequestQuotation from './views/quotation/VendorRequestQuotation';
 import VendorRequestQuotationView from './views/quotation/VendorRequestQuotationView';
@@ -396,6 +400,18 @@ class Routes extends React.PureComponent {
                      }} />
 
                   <Stack.Screen
+                     name="PRVendorContainer"
+                     component={PRVendorContainer}
+                     options={{
+                        headerShown: false
+                     }} />
+                  <Stack.Screen
+                     name="PRVendorIndex"
+                     component={PRVendorIndex}
+                     options={{
+                        headerShown: false
+                     }} />
+                  <Stack.Screen
                      name="PRContainer"
                      component={PRContainer}
                      options={{
@@ -628,6 +644,12 @@ class Routes extends React.PureComponent {
                   <Stack.Screen
                      name="GenerateQuotation"
                      component={GenerateQuotation}
+                     options={{
+                        headerShown: false
+                     }} />
+                  <Stack.Screen
+                     name="GenerateQuotationV2"
+                     component={GenerateQuotationV2}
                      options={{
                         headerShown: false
                      }} />

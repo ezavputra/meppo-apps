@@ -43,7 +43,8 @@ class VendorRequestQuotationView extends Component {
     this.state = {
       data: [],
       filtered_data: [],
-      showModal: false
+      showModal: false,
+      product_selected: []
     };
   }
 
@@ -60,7 +61,18 @@ class VendorRequestQuotationView extends Component {
 
   async fetchData() {
     const { navigation, me, accessToken, saveSettings } = this.props;
+    const { params = {} } = this.props.route;
 
+    try {
+      const response = await axios.post("/request_quotation_vendor/show/" + params.item.id);
+      this.setState({
+        data: response.data.results,
+        filtered_data: response.data.results,
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   render() {
@@ -108,58 +120,97 @@ class VendorRequestQuotationView extends Component {
               </Text>
               <Text sx={glueAndroid.Global_textBase}
                 style={{ width: '100%', marginBottom: 4 }}>
-                {params.item.rfq.code}
+                {params.item.code}
               </Text>
             </View>
             <View style={{ marginBottom: 8 }}>
               <Text sx={glueAndroid.Global_textBaseBold}
                 style={{ width: '100%', marginBottom: 4 }}>
-                Location
+                Request Date
               </Text>
               <Text sx={glueAndroid.Global_textBase}
                 style={{ width: '100%', marginBottom: 4 }}>
-                {params.item.rfq.warehouse.name}
+                {params.item.date}
               </Text>
             </View>
           </View>
 
           <FlatList
-            data={params.item.rfq.rfq_details}
+            data={this.state.filtered_data.detail}
             showsVerticalScrollIndicator={false}
             style={{
               backgroundColor: '#fff',
               paddingTop: 10,
             }}
             renderItem={({ item, index }) => {
+              item.selected = 0;
               return (
                 <View style={{
-                  flexDirection: 'row', marginHorizontal: 16, marginVertical: 8, padding: 16, borderRadius: 10,
+                  flex: 1, flexDirection: 'column',
+                  marginHorizontal: 16, marginVertical: 8, padding: 16, borderRadius: 10,
                   borderWidth: 1, borderColor: 'black',
-                  marginBottom: index + 1 == this.state.filtered_data.length ? 100 : 0,
+                  marginBottom: index + 1 == this.state.filtered_data.detail.length ? 200 : 0,
                   // backgroundColor: pressed ? '#bdeeff' : '#fff',
-                  alignItems: 'center', justifyContent: 'space-between',
+                  justifyContent: 'space-between'
                 }}>
                   <View>
-                    <Text sx={glueAndroid.Global_textBaseBold}
-                      style={{ width: '100%', marginBottom: 4 }}>
-                      {item.product.name}
-                    </Text>
-                    <Text sx={glueAndroid.Global_textLight}
-                      style={{ width: '100%', marginBottom: 4 }}>
-                      {item.product.code}
-                    </Text>
-                    <Text sx={glueAndroid.Global_textBaseBold}
-                      style={{ width: '100%', marginBottom: 4 }}>
-                      Max Delivery{"\n"}
-                      <Text sx={glueAndroid.Global_textLight}
-                        style={{ width: '100%', marginBottom: 4 }}>
-                        {item.max_date_delivery}
-                      </Text>
-                    </Text>
-                    <Text sx={glueAndroid.Global_textBaseBold}
-                      style={{ width: '100%', marginBottom: 4 }}>
-                      {item.qty} PCS
-                    </Text>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Image
+                        source={{ uri: "https://staging.meppo-app.com/" + item.product.photo }}
+                        sx={{
+                          "@base": {
+                            width: 80,
+                            height: 80,
+                          },
+                          "@sm": {
+                            width: 80,
+                            height: 80,
+                          },
+                          "@md": {
+                            width: 80,
+                            height: 80,
+                          },
+                        }}
+                        resizeMode='stretch'
+                      />
+                      <View style={{ flex: 1, flexDirection: 'column' }}>
+                        <Text sx={glueAndroid.Global_textBaseBold}
+                          style={{ width: '100%', marginBottom: 4 }}>
+                          {item.product.name}
+                        </Text>
+                        <Text sx={glueAndroid.Global_textBaseBold}
+                          style={{ width: '100%', marginBottom: 4 }}>
+                          Max Delivery:
+                        </Text>
+                        <Text sx={glueAndroid.Global_textLightItalic}
+                          style={{ width: '100%', marginBottom: 2 }}>
+                          {item.created_at}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <Pressable
+                      onPress={() => {
+                        item.selected = 1;
+                        this.setState({ product_selected: [...this.state.product_selected, item] });
+                      }}>
+                      {({ pressed }) => {
+                        return (
+                          <View style={{
+                            padding: 12, borderRadius: 10, marginTop: 10,
+                            backgroundColor: pressed ? '#306fe3' : '#013597',
+                            alignItems: 'center', justifyContent: 'center'
+                          }}>
+                            <View style={{ flexDirection: 'row' }}>
+                              <Text sx={glueAndroid.Global_textBaseBold}
+                                style={{ color: 'white' }}>
+                                {item.selected == 0 ? "Tambah" : "Ditambahkan"}
+                              </Text>
+                            </View>
+                          </View>
+                        )
+                      }}
+                    </Pressable>
                   </View>
                 </View>
               )
@@ -167,14 +218,43 @@ class VendorRequestQuotationView extends Component {
           </FlatList>
 
           <View style={{
-            position: 'absolute', bottom: 0, width: '100%'
+            position: 'absolute', bottom: 0, width: '100%',
+            backgroundColor: 'white'
           }}>
             <Pressable
               onPress={() => {
+                // navigation.navigate({
+                //   name: 'PurchaseRequestDetailAdd',
+                //   params: {
+                //     onAddItem: this.onAddItem,
+                //     product_category: this.state.product_category,
+                //     unit: this.state.unit,
+                //     product_selected: this.state.product_selected
+                //   }
+                // })
+              }}>
+              {({ pressed }) => {
+                return (
+                  <View style={{
+                    flexDirection: 'row', marginHorizontal: 16, marginVertical: 4, padding: 12, borderRadius: 10,
+                    backgroundColor: pressed ? '#81defc' : '#bdeeff', alignItems: 'center', justifyContent: 'space-between'
+                  }}>
+                    <Text sx={glueAndroid.Global_textBaseBold}
+                      style={{ color: '#009BD4' }}>
+                      {this.state.product_selected.length + " Items Selected"}
+                    </Text>
+                    <ChevronRight size={18} color='#009BD4' />
+                  </View>
+                )
+              }}
+            </Pressable>
+            <Pressable
+              onPress={() => {
                 navigation.navigate({
-                  name: 'GenerateQuotation',
+                  name: 'GenerateQuotationV2',
                   params: {
-                    item: params.item
+                    item: params.item,
+                    item_selected: this.state.product_selected
                   }
                 });
               }}>
