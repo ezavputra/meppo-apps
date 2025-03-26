@@ -3,11 +3,7 @@ import {
 } from 'react-native';
 
 // Development
-// export const baseURL = "http://192.168.18.38:8000";
-// export const baseURL = "http://192.168.100.122:8000";
-// export const baseURL = "https://purchasing.filament.my.id";
-// export const baseURL = "https://test.manunggaljasa.com";
-export const baseURL = "https://staging.meppo-app.com";
+export const baseURL = "https://meppo-app.com";
 export const customData = require('../../env.json');
 //export const baseURL = customData.API_URL;
 export const versi = "4.0.0";

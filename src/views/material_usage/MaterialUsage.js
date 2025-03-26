@@ -233,7 +233,7 @@ class MaterialUsage extends Component {
                             </Text>
                             <Text sx={glueAndroid.Global_textLightItalic}
                               style={{ width: '100%', marginBottom: 5 }}>
-                              Warehouse {item.warehouse.name}
+                              {item.warehouse != null ? "Warehouse " + item.warehouse.name : "Tidak Ada Warehouse"}
                             </Text>
                             <Text sx={glueAndroid.Global_textBaseBold}
                               style={{ width: '100%' }}>

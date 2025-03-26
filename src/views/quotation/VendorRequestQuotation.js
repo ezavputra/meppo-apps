@@ -306,7 +306,8 @@ class VendorRequestQuotation extends Component {
                         navigation.navigate({
                           name: 'VendorRequestQuotationView',
                           params: {
-                            item: item
+                            item: item,
+                            onSuccessAdd: this.onSuccessAdd
                           }
                         });
                       }}>

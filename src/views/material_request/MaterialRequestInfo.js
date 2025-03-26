@@ -124,7 +124,7 @@ class MaterialRequestInfo extends Component {
                     {params.item.created_by.name}
                   </Text>
                 </View>
-                <View style={{ marginVertical: 8, marginTop: 12 }}>
+                {/* <View style={{ marginVertical: 8, marginTop: 12 }}>
                   <Text sx={glueAndroid.Global_textTitle}>
                     Last Update
                   </Text>
@@ -134,7 +134,7 @@ class MaterialRequestInfo extends Component {
                   <Text sx={glueAndroid.Global_textBase}>
                     {params.item.updated_at}
                   </Text>
-                </View>
+                </View> */}
                 <View style={{ marginVertical: 8, marginTop: 12 }}>
                   <Text sx={glueAndroid.Global_textTitle}>
                     Remarks

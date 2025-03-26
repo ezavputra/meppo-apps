@@ -106,7 +106,7 @@ class VendorRequestQuotationView extends Component {
                   marginLeft: 16,
                   fontSize: 24, lineHeight: 32
                 }}>
-                  Detail RFQ
+                  Request Quotation
                 </Text>
               </View>
             </Pressable>
@@ -116,7 +116,7 @@ class VendorRequestQuotationView extends Component {
             <View style={{ marginBottom: 8 }}>
               <Text sx={glueAndroid.Global_textBaseBold}
                 style={{ width: '100%', marginBottom: 4 }}>
-                No. RFQ
+                No. Purchase Request
               </Text>
               <Text sx={glueAndroid.Global_textBase}
                 style={{ width: '100%', marginBottom: 4 }}>
@@ -173,7 +173,7 @@ class VendorRequestQuotationView extends Component {
                         }}
                         resizeMode='stretch'
                       />
-                      <View style={{ flex: 1, flexDirection: 'column' }}>
+                      <View style={{ flex: 1, flexDirection: 'column', marginLeft: 5 }}>
                         <Text sx={glueAndroid.Global_textBaseBold}
                           style={{ width: '100%', marginBottom: 4 }}>
                           {item.product.name}
@@ -253,6 +253,7 @@ class VendorRequestQuotationView extends Component {
                 navigation.navigate({
                   name: 'GenerateQuotationV2',
                   params: {
+                    onSuccessAdd: params.onSuccessAdd,
                     item: params.item,
                     item_selected: this.state.product_selected
                   }
